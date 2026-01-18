@@ -52,7 +52,6 @@ export function makeAdvocacyMessage(opts: {
     "",
     close,
     "",
-    "Thank you,",
-    "[Your name]",
+    "Thank you!",
   ].join("\n");
 }
