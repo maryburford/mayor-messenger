@@ -61,7 +61,7 @@ export default function App() {
 
     const trimmed = address.trim();
     if (trimmed.length < 5) {
-      setError("Enter a street address (e.g., 158 Wayne St).");
+      setError("Enter a street address (e.g., 30 Randolph).");
       return;
     }
 
@@ -165,146 +165,140 @@ export default function App() {
     }
   }
 
-  return (
-    <div className="min-h-screen p-5 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold">Find your Jersey City Ward</h1>
-      <p className="mt-2 text-sm opacity-80">
-        We don’t store your address. It’s only used to find your ward (or we’ll show the Mayor as a fallback).
+return (
+  <div className="min-h-screen p-5 max-w-xl mx-auto">
+    <h1 className="text-2xl font-bold">Message your Jersey City Councilperson</h1>
+
+    <p className="mt-2 text-sm opacity-80">
+      Type your address to get the right contact info — plus a ready-to-copy message asking Jersey City to fund animal welfare.
+    </p>
+    <p className="mt-2 text-sm opacity-80">
+      Don’t want to email? No problem. Copy the message and post it on their Facebook or Instagram.
+    </p>
+    <p className="mt-2 text-xs opacity-70">
+      Privacy: we don’t store your address. It’s only used to find the right person to contact.
+    </p>
+
+    <div className="mt-5">
+      <label className="block text-sm font-medium mb-2">Your Jersey City address</label>
+      <input
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
+        autoComplete="street-address"
+        placeholder="30 Randolph"
+        className="w-full p-4 text-lg rounded-xl border"
+      />
+      <p className="mt-2 text-xs opacity-70">
+        You can type just the street address — we’ll fill in “Jersey City, NJ.”
       </p>
 
-      <div className="mt-5">
-        <label className="block text-sm font-medium mb-2">Address</label>
-        <input
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          autoComplete="street-address"
-          placeholder="158 Wayne St"
-          className="w-full p-4 text-lg rounded-xl border"
-        />
+      <button
+        onClick={onLookup}
+        disabled={loading}
+        className="w-full mt-3 p-4 rounded-xl text-lg font-semibold border"
+      >
+        {loading ? "Finding your councilperson..." : "Get contact + message"}
+      </button>
 
-        <button
-          onClick={onLookup}
-          disabled={loading}
-          className="w-full mt-3 p-4 rounded-xl text-lg font-semibold border"
-        >
-          {loading ? "Looking up..." : "Find my ward"}
-        </button>
+      {error && (
+        <div className="mt-4 p-3 rounded-xl border">
+          <div className="font-semibold">Note</div>
+          <div className="text-sm mt-1">{error}</div>
+        </div>
+      )}
 
-        {error && (
-          <div className="mt-4 p-3 rounded-xl border">
-            <div className="font-semibold">Note</div>
-            <div className="text-sm mt-1">{error}</div>
-          </div>
-        )}
-
-        {result && (
-          <div className="mt-4 p-4 rounded-xl border">
-            <div className="text-sm opacity-80">Lookup</div>
-            <div className="font-medium break-words">{result.normalizedQuery}</div>
-
-            {result.matchedAddress && (
-              <>
-                <div className="mt-3 text-sm opacity-80">Matched address</div>
-                <div className="font-medium">{result.matchedAddress}</div>
-              </>
-            )}
-
-            <div className="mt-3 text-sm opacity-80">Ward</div>
-            <div className="text-xl font-bold">{result.ward}</div>
-
-            {result.usedMayorFallback && (
-              <div className="mt-2 text-sm opacity-80">
-                We couldn’t confidently match a ward, so we’re showing the Mayor’s contact info as a fallback.
-              </div>
-            )}
-
-            {typeof result.lat === "number" && typeof result.lon === "number" && (
-              <div className="mt-3 text-xs opacity-70">
-                lat {result.lat.toFixed(6)} · lon {result.lon.toFixed(6)}
-              </div>
-            )}
-
-            {/* Contact card */}
-            <div className="mt-5 p-4 rounded-xl border">
-              {council ? (
-                <>
-                  <div className="text-sm opacity-70">{council.displayWard}</div>
-                  <div className="text-xl font-bold">
-                    {council.roleLabel} {council.name}
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {/* Phones */}
-                    {council.phones?.length
-                      ? council.phones.map((p) => (
-                          <a key={p} href={toTelHref(p)} className="px-3 py-2 rounded-lg border text-sm">
-                            Call {p}
-                          </a>
-                        ))
-                      : null}
-
-                    {/* Email only if present */}
-                    {council.emails?.length
-                      ? council.emails.map((e) => (
-                          <a
-                            key={e}
-                            href={toMailtoHref(e, "Please fund animal welfare in Jersey City", message)}
-                            className="px-3 py-2 rounded-lg border text-sm"
-                          >
-                            Email
-                          </a>
-                        ))
-                      : null}
-
-                    {/* Facebook */}
-                    {council.facebookUrl ? (
-                      <a
-                        href={council.facebookUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-3 py-2 rounded-lg border text-sm"
-                      >
-                        Facebook
-                      </a>
-                    ) : null}
-
-                    {/* Instagram */}
-                    {council.instagramUrl ? (
-                      <a
-                        href={council.instagramUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-3 py-2 rounded-lg border text-sm"
-                      >
-                        Instagram
-                      </a>
-                    ) : null}
-
-                    <button
-                      onClick={() => copyToClipboard(message)}
-                      className="px-3 py-2 rounded-lg border text-sm font-semibold"
-                    >
-                      Copy message
-                    </button>
-                  </div>
-
-                  <div className="mt-4">
-                    <div className="text-sm font-medium mb-2">Message to send</div>
-                    <pre className="whitespace-pre-wrap text-sm p-3 rounded-lg bg-gray-50 border">{message}</pre>
-                  </div>
-                </>
-              ) : (
-                <div>
-                  <div className="font-semibold">Missing contact data</div>
-                  <div className="text-sm mt-1">
-                    No entry found in <span className="font-mono">COUNCIL_BY_WARD</span> for{" "}
-                    <span className="font-mono">{result.contactKey}</span>. Add it (especially the "MAYOR" entry).
-                  </div>
-                </div>              )}
+      {result && (
+        <div className="mt-4 p-4 rounded-xl border">
+          {result.usedMayorFallback && (
+            <div className="text-sm opacity-80">
+              We couldn’t match your address to a ward, so we’re showing the Mayor’s contact as a fallback.
             </div>
+          )}
+
+          <div className={result.usedMayorFallback ? "mt-4 p-4 rounded-xl border" : "p-4 rounded-xl border"}>
+            {council ? (
+              <>
+                <div className="text-sm opacity-70">{council.displayWard}</div>
+                <div className="text-xl font-bold">
+                  {council.roleLabel} {council.name}
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {council.phones?.length
+                    ? council.phones.map((p) => (
+                        <a
+                          key={p}
+                          href={toTelHref(p)}
+                          className="px-3 py-2 rounded-lg border text-sm"
+                        >
+                          Call {p}
+                        </a>
+                      ))
+                    : null}
+
+                  {council.emails?.length
+                    ? council.emails.map((e) => (
+                        <a
+                          key={e}
+                          href={toMailtoHref(e, "Please fund animal welfare in Jersey City", message)}
+                          className="px-3 py-2 rounded-lg border text-sm"
+                        >
+                          Email
+                        </a>
+                      ))
+                    : null}
+
+                  {council.facebookUrl ? (
+                    <a
+                      href={council.facebookUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-2 rounded-lg border text-sm"
+                    >
+                      Post on Facebook
+                    </a>
+                  ) : null}
+
+                  {council.instagramUrl ? (
+                    <a
+                      href={council.instagramUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-2 rounded-lg border text-sm"
+                    >
+                      Open Instagram
+                    </a>
+                  ) : null}
+
+                  <button
+                    onClick={() => copyToClipboard(message)}
+                    className="px-3 py-2 rounded-lg border text-sm font-semibold"
+                  >
+                    Copy message text
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <div className="text-sm font-medium mb-2">
+                    Copy & paste message (email, Facebook, or Instagram)
+                  </div>
+                  <pre className="whitespace-pre-wrap text-sm p-3 rounded-lg bg-gray-50 border">
+                    {message}
+                  </pre>
+                </div>
+              </>
+            ) : (
+              <div>
+                <div className="font-semibold">Missing contact data</div>
+                <div className="text-sm mt-1">
+                  No entry found in <span className="font-mono">COUNCIL_BY_WARD</span> for{" "}
+                  <span className="font-mono">{result.contactKey}</span>.
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
-  );
-}
+  </div>
+)};
