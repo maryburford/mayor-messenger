@@ -172,7 +172,7 @@ return (
     alt="Fat tortie"
     className="w-50 h-auto"
   />
-    <h1 className="text-lg font-bold">Message your Jersey City Councilperson</h1>
+    <h1 className="text-2xl font-bold">Message your Jersey City Councilperson</h1>
 
     <p className="mt-2 text-base opacity-80">
       Type your address to get the right contact info — plus a ready-to-copy message asking Jersey City to better fund animal welfare.
