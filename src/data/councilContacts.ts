@@ -102,7 +102,7 @@ export const COUNCIL_BY_WARD: Record<string, CouncilContact> = {
 MAYOR: {
     wardKey: "MAYOR", 
     displayWard: "Citywide",
-    name: "Jersey City Mayor",
+    name: "James Solomon",
     roleLabel: "Mayor",
     phones: ["(201) 547-5200"],
     emails: ["mayor@jcnj.org"],  
